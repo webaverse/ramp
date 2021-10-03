@@ -7,15 +7,15 @@ const texBase = 'Vol_13_1';
 
 const localVector = new THREE.Vector3();
 
-class PrismGeometry extends THREE.BoxGeometry {
-  constructor(vertices, depth) {
-    super(2, 2, 4);
+class RampGeometry extends THREE.BoxGeometry {
+  constructor(w, h, d) {
+    super(w, h, d);
     
     const numPoints = this.attributes.position.array.length/3;
     for (let i = 0; i < numPoints; i++) {
       localVector.fromArray(this.attributes.position.array, i*3);
-      if (localVector.z >= 1) {
-        localVector.y = -2/2;
+      if (localVector.z >= d/2) {
+        localVector.y = -h/2;
       }
       localVector.toArray(this.attributes.position.array, i*3);
     }
@@ -41,13 +41,7 @@ export default () => {
   const app = useApp();
   const physics = usePhysics();
   
-  const scale = 2;
-  const A = new THREE.Vector2( 0, 0 ).multiplyScalar(scale);
-  const B = new THREE.Vector2( 2, 0 ).multiplyScalar(scale);
-  const C = new THREE.Vector2( 0, 1 ).multiplyScalar(scale);
-  const depth = scale;
-  const geometry = new PrismGeometry([ A, B, C ], depth)
-    // .applyMatrix4(new THREE.Matrix4().makeTranslation(-2*scale/2, 0, -scale/2));
+  const geometry = new RampGeometry(2, 2, 4);
 
   const map = new THREE.Texture();
   map.wrapS = THREE.RepeatWrapping;
