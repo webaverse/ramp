@@ -3,40 +3,37 @@ import metaversefile from 'metaversefile';
 const {useApp, useFrame, useActivate, useLoaders, usePhysics, useCleanup} = metaversefile;
 
 const baseUrl = import.meta.url.replace(/(\/)[^\/\\]*$/, '$1');
+const texBase = 'Vol_13_1';
+
 const localVector = new THREE.Vector3();
 
-class PrismGeometry extends THREE.ExtrudeGeometry {
+class PrismGeometry extends THREE.BoxGeometry {
   constructor(vertices, depth) {
-    var Shape = new THREE.Shape();
-
-    ( function f( ctx ) {
-
-        ctx.moveTo( vertices[0].x, vertices[0].y );
-        for (var i=1; i < vertices.length; i++) {
-            ctx.lineTo( vertices[i].x, vertices[i].y );
-        }
-        ctx.lineTo( vertices[0].x, vertices[0].y );
-
-    } )( Shape );
-
-    var settings = { };
-    settings.depth = depth;
-    settings.bevelEnabled = false;
-    super(Shape, settings);
+    super(2, 2, 4);
     
     const numPoints = this.attributes.position.array.length/3;
-    const uvs = new Float32Array(numPoints*3);
+    for (let i = 0; i < numPoints; i++) {
+      localVector.fromArray(this.attributes.position.array, i*3);
+      if (localVector.z >= 1) {
+        localVector.y = -2/2;
+      }
+      localVector.toArray(this.attributes.position.array, i*3);
+    }
+    this.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 2/2, 0));
+    
     const boundingBox = new THREE.Box3()
       .setFromBufferAttribute(this.attributes.position);
     const size = boundingBox.getSize(new THREE.Vector3());
     const topRight = boundingBox.max;
+    
+    const uvs2 = new Float32Array(numPoints*3);
     for (let i = 0; i < numPoints; i++) {
       localVector.fromArray(this.attributes.position.array, i*3);
-      uvs[i*3] = (topRight.z - localVector.z) / size.z;
-      uvs[i*3+1] = 1-(topRight.x - localVector.x) / size.x;
-      uvs[i*3+2] = localVector.y;
+      uvs2[i*3] = (topRight.x - localVector.x) / size.x;
+      uvs2[i*3+1] = 1-(topRight.z - localVector.z) / size.z;
+      uvs2[i*3+2] = localVector.y;
     }
-    this.setAttribute('uv2', new THREE.BufferAttribute(uvs, 3));
+    this.setAttribute('uv2', new THREE.BufferAttribute(uvs2, 3));
   }
 }
 
@@ -50,9 +47,64 @@ export default () => {
   const C = new THREE.Vector2( 0, 1 ).multiplyScalar(scale);
   const depth = scale;
   const geometry = new PrismGeometry([ A, B, C ], depth)
-    .applyMatrix4(new THREE.Matrix4().makeTranslation(-2*scale/2, 0, -scale/2));
-  window.geometry = geometry;
-  const baseMaterial = new THREE.MeshPhongMaterial( { color: 0x00b2fc, specular: 0x00ffff, shininess: 20 } );
+    // .applyMatrix4(new THREE.Matrix4().makeTranslation(-2*scale/2, 0, -scale/2));
+
+  const map = new THREE.Texture();
+  map.wrapS = THREE.RepeatWrapping;
+  map.wrapT = THREE.RepeatWrapping;
+  {
+    const img = new Image();
+    img.onload = () => {
+      map.image = img;
+      map.needsUpdate = true;
+    };
+    img.onerror = err => {
+      console.warn(err);
+    };
+    img.crossOrigin = 'Anonymous';
+    img.src = baseUrl + texBase + '_Base_Color.png';
+  }
+  const normalMap = new THREE.Texture();
+  normalMap.wrapS = THREE.RepeatWrapping;
+  normalMap.wrapT = THREE.RepeatWrapping;
+  {
+    const img = new Image();
+    img.onload = () => {
+      normalMap.image = img;
+      normalMap.needsUpdate = true;
+    };
+    img.onerror = err => {
+      console.warn(err);
+    };
+    img.crossOrigin = 'Anonymous';
+    img.src = baseUrl + texBase + '_Normal.png';
+  }
+  const bumpMap = new THREE.Texture();
+  bumpMap.wrapS = THREE.RepeatWrapping;
+  bumpMap.wrapT = THREE.RepeatWrapping;
+  {
+    const img = new Image();
+    img.onload = () => {
+      bumpMap.image = img;
+      bumpMap.needsUpdate = true;
+    };
+    img.onerror = err => {
+      console.warn(err);
+    };
+    img.crossOrigin = 'Anonymous';
+    img.src = baseUrl + texBase + '_Height.png';
+  }
+  const baseMaterial = new THREE.MeshStandardMaterial({
+    // color: 0x00b2fc,
+    // specular: 0x00ffff,
+    // shininess: 20,
+    map,
+    normalMap,
+    bumpMap,
+    roughness: 1,
+    metalness: 0,
+  });
+  
   const stripeMaterial = new THREE.ShaderMaterial({
     uniforms: {
       uTex: {
@@ -100,7 +152,7 @@ export default () => {
       varying vec3 vUv;
 
       void main() {
-        if (vUv.x > 0. && vUv.x < 1. && vUv.y > 0. && vUv.y < 1. && vUv.z > 0.) {
+        if (vUv.x > 0.001 && vUv.x < 0.999 && vUv.y > 0.001 && vUv.y < 0.999 && vUv.z > 0.) {
           vec4 c1 = texture(uTex, vec2(vUv.x*0.5, vUv.y + uTime));
           vec4 c2 = texture(uTex, vec2(0.5 + vUv.x*0.5, vUv.y + uTime));
           vec3 c = (c1.rgb * (1. - c2.a)) + (c2.rgb * c2.a);
@@ -110,18 +162,17 @@ export default () => {
         }
       }
     `,
-    // transparent: true,
+    transparent: true,
     // depthWrite: false,
     // polygonOffset: true,
-    // polygonOffsetFactor: -1,
-    // polygonOffsetUnits: 1,
+    polygonOffsetFactor: -1,
+    polygonOffsetUnits: 1,
   });
-  const mesh = new THREE.Mesh(geometry, [
-    baseMaterial,
-    stripeMaterial,
-  ]);
+  const mesh = new THREE.Mesh(geometry, baseMaterial);
   // mesh.rotation.x = -Math.PI  /  2;
   app.add(mesh);
+  const mesh2 = new THREE.Mesh(geometry, stripeMaterial);
+  app.add(mesh2);
   
   (async () => {
     const img = new Image();
