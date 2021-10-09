@@ -184,15 +184,15 @@ export default () => {
   
   const physicsIds = [];
   {  
-    mesh.updateMatrixWorld();
+    /* mesh.updateMatrixWorld();
     const physicsMesh = physics.convertMeshToPhysicsMesh(mesh);
     physicsMesh.position.copy(mesh.position);
     physicsMesh.quaternion.copy(mesh.quaternion);
-    physicsMesh.scale.copy(mesh.scale);
+    physicsMesh.scale.copy(mesh.scale); */
 
-    app.add(physicsMesh);
-    const physicsId = physics.addGeometry(physicsMesh);
-    app.remove(physicsMesh);
+    // app.add(physicsMesh);
+    const physicsId = physics.addGeometry(mesh);
+    // app.remove(physicsMesh);
     physicsIds.push(physicsId);
   }
   
