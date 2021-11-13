@@ -135,6 +135,7 @@ export default () => {
       }
     `,
     fragmentShader: `\
+    ${THREE.ShaderChunk.common}
       precision highp float;
       precision highp int;
 
