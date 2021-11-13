@@ -113,7 +113,6 @@ export default () => {
       },
     },
     vertexShader: `\
-      ${THREE.ShaderChunk.common}
       precision highp float;
       precision highp int;
 
