@@ -125,19 +125,18 @@ export default () => {
       attribute float torchLight;
 
       varying vec3 vUv;
-        ${THREE.ShaderChunk.logdepthbuf_vertex}
+      
       void main() {
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
         gl_Position = projectionMatrix * mvPosition;
 
         vUv = uv2;
+        ${THREE.ShaderChunk.logdepthbuf_vertex}
       }
     `,
     fragmentShader: `\
       precision highp float;
       precision highp int;
-
-      #define PI 3.1415926535897932384626433832795
 
       uniform sampler2D uTex;
       uniform float uTime;
