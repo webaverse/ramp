@@ -113,6 +113,7 @@ export default () => {
       },
     },
     vertexShader: `\
+      ${THREE.ShaderChunk.common}
       precision highp float;
       precision highp int;
 
@@ -124,7 +125,7 @@ export default () => {
       attribute float torchLight;
 
       varying vec3 vUv;
-      
+      ${THREE.ShaderChunk.logdepthbuf_pars_vertex}
       void main() {
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
         gl_Position = projectionMatrix * mvPosition;
@@ -144,8 +145,8 @@ export default () => {
 
       varying vec3 vViewPosition;
       varying vec3 vUv;
-      ${THREE.ShaderChunk.logdepthbuf_pars_fragment}
 
+      ${THREE.ShaderChunk.logdepthbuf_pars_fragment}
       void main() {
         if (vUv.x > 0.001 && vUv.x < 0.999 && vUv.y > 0.001 && vUv.y < 0.999 && vUv.z > 0.) {
           vec4 c1 = texture(uTex, vec2(vUv.x*0.5, vUv.y + uTime));
@@ -160,11 +161,6 @@ export default () => {
 
       }
     `,
-    transparent: true,
-    // depthWrite: false,
-    // polygonOffset: true,
-    polygonOffsetFactor: -1,
-    polygonOffsetUnits: 1,
   });
   const mesh = new THREE.Mesh(geometry, baseMaterial);
   // mesh.rotation.x = -Math.PI  /  2;
