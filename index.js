@@ -164,7 +164,7 @@ export default () => {
   });
   const mesh = new THREE.Mesh(geometry, baseMaterial);
   // mesh.rotation.x = -Math.PI  /  2;
-  // app.add(mesh);
+  app.add(mesh);
   const mesh2 = new THREE.Mesh(geometry, stripeMaterial);
   app.add(mesh2);
   
