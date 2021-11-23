@@ -97,7 +97,7 @@ export default () => {
   //   opacity:0.5,
   // });
 
-  const baseMaterial = new THREE.ShaderMaterial(THREE.ShaderLib.standard);
+  const baseMaterial = new THREE.MeshStandardMaterial({map,normalMap,bumpMap,roughness,metalness})
 
   const stripeMaterial = new THREE.ShaderMaterial({
     uniforms: {
@@ -153,11 +153,13 @@ export default () => {
           vec4 c2 = texture(uTex, vec2(0.5 + vUv.x*0.5, vUv.y + uTime));
           vec3 c = (c1.rgb * (1. - c2.a)) + (c2.rgb * c2.a);
           gl_FragColor = vec4(c, 1.);
+          ${THREE.ShaderChunk.logdepthbuf_fragment}
         } else {
           gl_FragColor = vec4(0.);
+          ${THREE.ShaderChunk.logdepthbuf_fragment}
         }
         
-        ${THREE.ShaderChunk.logdepthbuf_fragment}
+
 
       }
     `,
