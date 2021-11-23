@@ -131,7 +131,8 @@ export default () => {
         gl_Position = projectionMatrix * mvPosition;
         ${THREE.ShaderChunk.logdepthbuf_vertex}
         vUv = uv2;
-       
+
+        ${THREE.ShaderChunk.logdepthbuf_vertex}
       }
     `,
     fragmentShader: `\
@@ -145,7 +146,6 @@ export default () => {
 
       varying vec3 vViewPosition;
       varying vec3 vUv;
-
       ${THREE.ShaderChunk.logdepthbuf_pars_fragment}
       void main() {
         if (vUv.x > 0.001 && vUv.x < 0.999 && vUv.y > 0.001 && vUv.y < 0.999 && vUv.z > 0.) {
@@ -153,14 +153,10 @@ export default () => {
           vec4 c2 = texture(uTex, vec2(0.5 + vUv.x*0.5, vUv.y + uTime));
           vec3 c = (c1.rgb * (1. - c2.a)) + (c2.rgb * c2.a);
           gl_FragColor = vec4(c, 1.);
-          ${THREE.ShaderChunk.logdepthbuf_fragment}
         } else {
           gl_FragColor = vec4(0.);
-          ${THREE.ShaderChunk.logdepthbuf_fragment}
         }
-        
-
-
+        ${THREE.ShaderChunk.logdepthbuf_fragment}
       }
     `,
   });
