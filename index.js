@@ -88,10 +88,7 @@ export default () => {
     img.crossOrigin = 'Anonymous';
     img.src = baseUrl + texBase + '_Height.png';
   }
-  const baseMaterial = new THREE.MeshStandardMaterial({
-    // color: 0x00b2fc,
-    // specular: 0x00ffff,
-    // shininess: 20,
+  const baseMaterial = new THREE.MeshPhysicalMaterial({
     map,
     normalMap,
     bumpMap,
