@@ -162,10 +162,10 @@ export default () => {
   const mesh2 = new THREE.Mesh(geometry, stripeMaterial);
   const mesh = new THREE.Mesh(geometry, baseMaterial);
   // mesh.rotation.x = -Math.PI  /  2;
-  app.add(mesh2);
+
   app.add(mesh);
 
-
+  app.add(mesh2);
   
   (async () => {
     const img = new Image();
