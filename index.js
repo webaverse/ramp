@@ -129,7 +129,6 @@ export default () => {
       void main() {
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
         gl_Position = projectionMatrix * mvPosition;
-        ${THREE.ShaderChunk.logdepthbuf_vertex}
         vUv = uv2;
 
         ${THREE.ShaderChunk.logdepthbuf_vertex}
