@@ -97,7 +97,7 @@ export default () => {
   //   opacity:0.5,
   // });
 
-  const baseMaterial = new THREE.MeshStandardMaterial({map,normalMap,bumpMap,roughness,metalness})
+  const baseMaterial = new THREE.MeshStandardMaterial({map,normalMap,bumpMap,roughness:1,metalness:0})
 
   const stripeMaterial = new THREE.ShaderMaterial({
     uniforms: {
