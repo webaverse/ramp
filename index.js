@@ -159,11 +159,13 @@ export default () => {
       }
     `,
   });
+  const mesh2 = new THREE.Mesh(geometry, stripeMaterial);
   const mesh = new THREE.Mesh(geometry, baseMaterial);
   // mesh.rotation.x = -Math.PI  /  2;
-  app.add(mesh);
-  const mesh2 = new THREE.Mesh(geometry, stripeMaterial);
   app.add(mesh2);
+  app.add(mesh);
+
+
   
   (async () => {
     const img = new Image();
