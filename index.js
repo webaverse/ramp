@@ -97,48 +97,8 @@ export default () => {
   //   opacity:0.5,
   // });
 
-  const baseMaterial = new THREE.ShaderMaterial({
-    // map,
-    // normalMap,
-    // bumpMap,
-    // roughness: 1,
-    // metalness: 0,
-    // opacity:0.5,
-    uniforms: {
-      map: {
-        type: 't',
-        value: map,
-        needsUpdate: true,
-      },
-      normalMap: {
-        type: 't',
-        value: normalMap,
-        needsUpdate: true,
-      },
-      bumpMap: {
-        type: 't',
-        value: bumpMap,
-        needsUpdate: true,
-      },
-      roughness: {
-        type: 'f',
-        value: 1,
-        needsUpdate: true,
-      },
-      metalness: {
-        type: 'f',
-        value: 0,
-        needsUpdate: true,
-      },
-      vertexShader: `
-        ${THREE.ShaderChunk.meshphysical_vert}
-      `,
-      fragmentShader: `
-        ${THREE.ShaderChunk.meshphysical_frag}
-      `
-    },
-  });
-  
+  const baseMaterial = new THREE.ShaderMaterial(THREE.ShaderLib.standard);
+
   const stripeMaterial = new THREE.ShaderMaterial({
     uniforms: {
       uTex: {
