@@ -88,17 +88,17 @@ export default () => {
     img.crossOrigin = 'Anonymous';
     img.src = baseUrl + texBase + '_Height.png';
   }
-  // const baseMaterial = new THREE.MeshPhysicalMaterial({
-  //   map,
-  //   normalMap,
-  //   bumpMap,
-  //   roughness: 1,
-  //   metalness: 0,
-  //   opacity:0.5,
-  // });
-
-  const baseMaterial = new THREE.MeshStandardMaterial({map,normalMap,bumpMap,roughness:1,metalness:0})
-
+  const baseMaterial = new THREE.MeshStandardMaterial({
+    // color: 0x00b2fc,
+    // specular: 0x00ffff,
+    // shininess: 20,
+    map,
+    normalMap,
+    bumpMap,
+    roughness: 1,
+    metalness: 0,
+  });
+  
   const stripeMaterial = new THREE.ShaderMaterial({
     uniforms: {
       uTex: {
@@ -129,15 +129,17 @@ export default () => {
       void main() {
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
         gl_Position = projectionMatrix * mvPosition;
+
         vUv = uv2;
 
         ${THREE.ShaderChunk.logdepthbuf_vertex}
       }
     `,
     fragmentShader: `\
-
       precision highp float;
       precision highp int;
+
+      #define PI 3.1415926535897932384626433832795
 
       uniform sampler2D uTex;
       uniform float uTime;
@@ -158,13 +160,16 @@ export default () => {
         ${THREE.ShaderChunk.logdepthbuf_fragment}
       }
     `,
+    transparent: true,
+    // depthWrite: false,
+    // polygonOffset: true,
+    polygonOffsetFactor: -1,
+    polygonOffsetUnits: 1,
   });
-  const mesh2 = new THREE.Mesh(geometry, stripeMaterial);
   const mesh = new THREE.Mesh(geometry, baseMaterial);
   // mesh.rotation.x = -Math.PI  /  2;
-
   app.add(mesh);
-
+  const mesh2 = new THREE.Mesh(geometry, stripeMaterial);
   app.add(mesh2);
   
   (async () => {
