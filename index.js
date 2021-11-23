@@ -113,6 +113,7 @@ export default () => {
       },
     },
     vertexShader: `\
+      ${THREE.ShaderChunk.common}
       precision highp float;
       precision highp int;
 
@@ -124,12 +125,14 @@ export default () => {
       attribute float torchLight;
 
       varying vec3 vUv;
-
+      ${THREE.ShaderChunk.logdepthbuf_pars_vertex}
       void main() {
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
         gl_Position = projectionMatrix * mvPosition;
 
         vUv = uv2;
+
+        ${THREE.ShaderChunk.logdepthbuf_vertex}
       }
     `,
     fragmentShader: `\
@@ -144,7 +147,7 @@ export default () => {
 
       varying vec3 vViewPosition;
       varying vec3 vUv;
-
+      ${THREE.ShaderChunk.logdepthbuf_pars_fragment}
       void main() {
         if (vUv.x > 0.001 && vUv.x < 0.999 && vUv.y > 0.001 && vUv.y < 0.999 && vUv.z > 0.) {
           vec4 c1 = texture(uTex, vec2(vUv.x*0.5, vUv.y + uTime));
@@ -154,6 +157,7 @@ export default () => {
         } else {
           gl_FragColor = vec4(0.);
         }
+        ${THREE.ShaderChunk.logdepthbuf_fragment}
       }
     `,
     transparent: true,
