@@ -94,6 +94,7 @@ export default () => {
     bumpMap,
     roughness: 1,
     metalness: 0,
+    opacity:0.5,
   });
   
   const stripeMaterial = new THREE.ShaderMaterial({
