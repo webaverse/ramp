@@ -129,15 +129,17 @@ export default () => {
       void main() {
         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
         gl_Position = projectionMatrix * mvPosition;
-        ${THREE.ShaderChunk.logdepthbuf_vertex}
+
         vUv = uv2;
-       
+
+        ${THREE.ShaderChunk.logdepthbuf_vertex}
       }
     `,
     fragmentShader: `\
-
       precision highp float;
       precision highp int;
+
+      #define PI 3.1415926535897932384626433832795
 
       uniform sampler2D uTex;
       uniform float uTime;
@@ -145,7 +147,6 @@ export default () => {
 
       varying vec3 vViewPosition;
       varying vec3 vUv;
-
       ${THREE.ShaderChunk.logdepthbuf_pars_fragment}
       void main() {
         if (vUv.x > 0.001 && vUv.x < 0.999 && vUv.y > 0.001 && vUv.y < 0.999 && vUv.z > 0.) {
@@ -156,11 +157,14 @@ export default () => {
         } else {
           gl_FragColor = vec4(0.);
         }
-        
         ${THREE.ShaderChunk.logdepthbuf_fragment}
-
       }
     `,
+    transparent: true,
+    // depthWrite: false,
+    // polygonOffset: true,
+    polygonOffsetFactor: -1,
+    polygonOffsetUnits: 1,
   });
   const mesh = new THREE.Mesh(geometry, baseMaterial);
   // mesh.rotation.x = -Math.PI  /  2;
