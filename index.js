@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import metaversefile from 'metaversefile';
-const {useApp, useFrame, useActivate, useLoaders, usePhysics, useCleanup} = metaversefile;
+import totum from 'totum';
+const {useApp, useFrame, useActivate, useLoaders, usePhysics, useCleanup} = totum;
 
 const baseUrl = import.meta.url.replace(/(\/)[^\/\\]*$/, '$1');
 const texBase = 'Vol_13_1';
