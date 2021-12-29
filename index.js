@@ -167,11 +167,12 @@ export default () => {
     polygonOffsetUnits: 1,
   });
   const mesh = new THREE.Mesh(geometry, baseMaterial);
-  // mesh.rotation.x = -Math.PI  /  2;
   app.add(mesh);
+  mesh.updateMatrixWorld();
   const mesh2 = new THREE.Mesh(geometry, stripeMaterial);
   app.add(mesh2);
-  
+  mesh2.updateMatrixWorld();
+
   (async () => {
     const img = new Image();
     await new Promise((accept, reject) => {
